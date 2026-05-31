@@ -1,32 +1,46 @@
 import { useState } from "react";
 
-import proyectoService from "../services/proyectoService";
+import proyectoService
+    from "../services/proyectoService";
+
+import ProyectoCard
+    from "./ProyectoCard";
+
+import DetalleProyecto
+    from "./DetalleProyecto";
 
 const ListaProyectos = () => {
 
-    const [proyectos, setProyectos] =
-        useState(
+    const [proyectos,
+        setProyectos] = useState(
             proyectoService.obtenerProyectos()
         );
 
-    const [busqueda, setBusqueda] =
-        useState("");
+    const [busqueda,
+        setBusqueda] = useState("");
 
-    const [titulo, setTitulo] =
-        useState("");
-
-    const [categoria, setCategoria] =
-        useState("");
-
-    const [estado, setEstado] =
-        useState("");
+    const [proyectoSeleccionado,
+        setProyectoSeleccionado] =
+        useState(null);
 
     const [mostrarFormulario,
         setMostrarFormulario] =
         useState(false);
 
-    // ELIMINAR
+    const [formulario,
+        setFormulario] = useState({
 
+            titulo: "",
+            categoria: "",
+            estado: "",
+
+            descripcion: "",
+            descripcion2: "",
+
+            integrante: "",
+            rol: ""
+
+        });
     const eliminar = (id) => {
 
         proyectoService.eliminarProyecto(id);
@@ -36,13 +50,11 @@ const ListaProyectos = () => {
         );
     };
 
-    // BUSCAR
-
     const buscar = (texto) => {
 
         setBusqueda(texto);
 
-        if(texto === ""){
+        if (texto === "") {
 
             setProyectos(
                 proyectoService.obtenerProyectos()
@@ -56,24 +68,68 @@ const ListaProyectos = () => {
         }
     };
 
-    // AGREGAR
+    const cambiarInput = (e) => {
+
+        const {
+            name,
+            value
+        } = e.target;
+
+        setFormulario({
+
+            ...formulario,
+
+            [name]: value
+
+        });
+    };
 
     const agregarProyecto = () => {
 
-        if(
+        const {
+
+            titulo,
+            categoria,
+            estado,
+            descripcion,
+            descripcion2,
+            integrante,
+            rol
+        } = formulario;
+
+        if (
             titulo === "" ||
             categoria === "" ||
             estado === ""
-        ){
-            alert("Complete todos los campos");
+        ) {
+            alert("Complete los campos");
             return;
         }
 
         const nuevoProyecto = {
+
             id: Date.now(),
             titulo,
             categoria,
-            estado
+            estado,
+
+            descripcion: [
+                descripcion,
+                descripcion2
+            ],
+
+            recursos: [
+                "PDF",
+                "Drive",
+                "GitHub"
+            ],
+
+            equipo: [
+                {
+                    nombre: integrante,
+                    rol: rol
+                }
+            ]
         };
 
         proyectoService.agregarProyecto(
@@ -84,9 +140,17 @@ const ListaProyectos = () => {
             proyectoService.obtenerProyectos()
         );
 
-        setTitulo("");
-        setCategoria("");
-        setEstado("");
+        setFormulario({
+
+            titulo: "",
+            categoria: "",
+            estado: "",
+            descripcion: "",
+            descripcion2: "",
+            integrante: "",
+            rol: ""
+
+        });
 
         setMostrarFormulario(false);
     };
@@ -98,8 +162,6 @@ const ListaProyectos = () => {
             <h2>
                 Lista de Proyectos
             </h2>
-
-            {/* BUSCADOR */}
 
             <div className="buscador">
 
@@ -114,79 +176,59 @@ const ListaProyectos = () => {
 
             </div>
 
-            {/* LISTA */}
-
             <div className="contenedor-proyectos">
 
                 {
                     proyectos.map((proyecto) => (
 
-                        <div
-                            className="card"
+                        <ProyectoCard
+
                             key={proyecto.id}
-                        >
 
-                            <h3>
-                                {proyecto.titulo}
-                            </h3>
+                            proyecto={proyecto}
 
-                            <p>
-                                <strong>
-                                    Categoría:
-                                </strong>
+                            onEliminar={eliminar}
 
-                                {" "}
+                            onVerDetalle={
+                                setProyectoSeleccionado
+                            }
 
-                                {proyecto.categoria}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Estado:
-                                </strong>
-
-                                {" "}
-
-                                {proyecto.estado}
-                            </p>
-
-                            <button
-                                onClick={() =>
-                                    eliminar(
-                                        proyecto.id
-                                    )
-                                }
-                            >
-                                Eliminar
-                            </button>
-
-                        </div>
+                        />
 
                     ))
                 }
 
             </div>
 
-            {/* BOTON FLOTANTE */}
+            {    
+                proyectoSeleccionado && (
 
-            {
-                busqueda === "" && (
+                    <DetalleProyecto
 
-                    <button
-                        className="boton-flotante"
-                        onClick={() =>
-                            setMostrarFormulario(
-                                !mostrarFormulario
-                            )
+                        proyecto={
+                            proyectoSeleccionado
                         }
-                    >
-                        +
-                    </button>
+
+                        onCerrar={() =>
+                            setProyectoSeleccionado(null)
+                        }
+
+                    />
 
                 )
             }
+    
 
-            {/* FORMULARIO MODAL */}
+            <button
+                className="boton-flotante"
+                onClick={() =>
+                    setMostrarFormulario(
+                        !mostrarFormulario
+                    )
+                }
+            >
+                +
+            </button>
 
             {
                 mostrarFormulario && (
@@ -201,35 +243,76 @@ const ListaProyectos = () => {
 
                             <input
                                 type="text"
+                                name="titulo"
                                 placeholder="Título"
-                                value={titulo}
-                                onChange={(e) =>
-                                    setTitulo(
-                                        e.target.value
-                                    )
+                                value={
+                                    formulario.titulo
+                                }
+                                onChange={
+                                    cambiarInput
                                 }
                             />
 
                             <input
                                 type="text"
+                                name="categoria"
                                 placeholder="Categoría"
-                                value={categoria}
-                                onChange={(e) =>
-                                    setCategoria(
-                                        e.target.value
-                                    )
+                                value={
+                                    formulario.categoria
+                                }
+                                onChange={
+                                    cambiarInput
                                 }
                             />
 
                             <input
                                 type="text"
+                                name="estado"
                                 placeholder="Estado"
-                                value={estado}
-                                onChange={(e) =>
-                                    setEstado(
-                                        e.target.value
-                                    )
+                                value={
+                                    formulario.estado
                                 }
+                                onChange={
+                                    cambiarInput
+                                }
+                            />
+
+                            <textarea
+                                name="descripcion"
+                                placeholder="Descripción"
+                                value={
+                                    formulario.descripcion
+                                }
+                                onChange={
+                                    cambiarInput
+                                }
+                            />
+
+                            <textarea
+                                name="descripcion2"
+                                placeholder="Descripción adicional"
+                                value={
+                                    formulario.descripcion2
+                                }
+                                onChange={
+                                    cambiarInput
+                                }
+                            />
+
+                            <input
+                                type="text"
+                                name="integrante"
+                                placeholder="Nombre integrante"
+                                value={formulario.integrante}
+                                onChange={cambiarInput}
+                            />
+
+                            <input
+                                type="text"
+                                name="rol"
+                                placeholder="Rol integrante"
+                                value={formulario.rol}
+                                onChange={cambiarInput}
                             />
 
                             <div className="botones-formulario">
@@ -239,22 +322,16 @@ const ListaProyectos = () => {
                                         agregarProyecto
                                     }
                                 >
-                                    Agregar Proyecto
+                                    Agregar
                                 </button>
 
                                 <button
                                     className="btn-cancelar"
-                                    onClick={() => {
-
+                                    onClick={() =>
                                         setMostrarFormulario(
                                             false
-                                        );
-
-                                        setTitulo("");
-                                        setCategoria("");
-                                        setEstado("");
-
-                                    }}
+                                        )
+                                    }
                                 >
                                     Cancelar
                                 </button>
