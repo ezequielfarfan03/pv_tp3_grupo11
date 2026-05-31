@@ -63,8 +63,7 @@ const proyectoService = (() => {
         },
         {
             ]
-        }
-    ];
+        }   
 
     const obtenerProyectos = () => {
         return [...proyectos];
