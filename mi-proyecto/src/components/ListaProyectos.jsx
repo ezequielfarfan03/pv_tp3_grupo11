@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import proyectoService
     from "../services/proyectoService";
@@ -8,6 +8,12 @@ import ProyectoCard
 
 import DetalleProyecto
     from "./DetalleProyecto";
+
+import FormularioProyecto
+    from "./FormularioProyecto";
+
+import RegistroActividad
+    from "./RegistroActividad";
 
 const ListaProyectos = () => {
 
@@ -27,27 +33,74 @@ const ListaProyectos = () => {
         setMostrarFormulario] =
         useState(false);
 
-    const [formulario,
-        setFormulario] = useState({
+    const [ultimaActualizacion,
+        setUltimaActualizacion] =
+        useState("");
 
-            titulo: "",
-            categoria: "",
-            estado: "",
+    const primeraCarga =
+        useRef(true);
 
-            descripcion: "",
-            descripcion2: "",
+    const accionUsuario =
+        useRef(false);
 
-            integrante: "",
-            rol: ""
+    useEffect(() => {
 
-        });
+        if (primeraCarga.current) {
+
+            primeraCarga.current = false;
+            return;
+
+        }
+
+        if (!accionUsuario.current)
+            return;
+
+        const ahora = new Date();
+
+        const fechaHora =
+
+            `${ahora.getDate()
+                .toString()
+                .padStart(2, "0")}/` +
+
+            `${(ahora.getMonth() + 1)
+                .toString()
+                .padStart(2, "0")}/` +
+
+            `${ahora.getFullYear()} a las ` +
+
+            `${ahora.getHours()
+                .toString()
+                .padStart(2, "0")}:` +
+
+            `${ahora.getMinutes()
+                .toString()
+                .padStart(2, "0")} hs.`;
+
+        setUltimaActualizacion(
+            fechaHora
+        );
+
+        accionUsuario.current = false;
+
+    }, [proyectos]);
+
     const eliminar = (id) => {
 
         proyectoService.eliminarProyecto(id);
 
+        accionUsuario.current = true;
+
         setProyectos(
             proyectoService.obtenerProyectos()
         );
+
+        if (
+            proyectoSeleccionado &&
+            proyectoSeleccionado.id === id
+        ) {
+            setProyectoSeleccionado(null);
+        }
     };
 
     const buscar = (texto) => {
@@ -65,92 +118,83 @@ const ListaProyectos = () => {
             setProyectos(
                 proyectoService.buscarProyecto(texto)
             );
+
         }
     };
 
-    const cambiarInput = (e) => {
-
-        const {
-            name,
-            value
-        } = e.target;
-
-        setFormulario({
-
-            ...formulario,
-
-            [name]: value
-
-        });
-    };
-
-    const agregarProyecto = () => {
+    const agregarProyecto = (datos) => {
 
         const {
 
             titulo,
             categoria,
             estado,
+
             descripcion,
             descripcion2,
+
             integrante,
             rol
-        } = formulario;
+
+        } = datos;
 
         if (
-            titulo === "" ||
-            categoria === "" ||
-            estado === ""
+            titulo.trim() === "" ||
+            categoria.trim() === "" ||
+            estado.trim() === ""
         ) {
-            alert("Complete los campos");
+
+            alert(
+                "Complete los campos obligatorios"
+            );
+
             return;
         }
 
         const nuevoProyecto = {
 
             id: Date.now(),
+
             titulo,
             categoria,
             estado,
 
             descripcion: [
+
                 descripcion,
+
                 descripcion2
+
             ],
 
             recursos: [
+
                 "PDF",
                 "Drive",
                 "GitHub"
+
             ],
 
             equipo: [
+
                 {
                     nombre: integrante,
                     rol: rol
                 }
+
             ]
+
         };
 
         proyectoService.agregarProyecto(
             nuevoProyecto
         );
 
+        accionUsuario.current = true;
+
         setProyectos(
             proyectoService.obtenerProyectos()
         );
-
-        setFormulario({
-
-            titulo: "",
-            categoria: "",
-            estado: "",
-            descripcion: "",
-            descripcion2: "",
-            integrante: "",
-            rol: ""
-
-        });
 
         setMostrarFormulario(false);
     };
@@ -170,7 +214,9 @@ const ListaProyectos = () => {
                     placeholder="Buscar proyecto..."
                     value={busqueda}
                     onChange={(e) =>
-                        buscar(e.target.value)
+                        buscar(
+                            e.target.value
+                        )
                     }
                 />
 
@@ -179,28 +225,36 @@ const ListaProyectos = () => {
             <div className="contenedor-proyectos">
 
                 {
-                    proyectos.map((proyecto) => (
+                    proyectos.map(
+                        (proyecto) => (
 
-                        <ProyectoCard
+                            <ProyectoCard
 
-                            key={proyecto.id}
+                                key={
+                                    proyecto.id
+                                }
 
-                            proyecto={proyecto}
+                                proyecto={
+                                    proyecto
+                                }
 
-                            onEliminar={eliminar}
+                                onEliminar={
+                                    eliminar
+                                }
 
-                            onVerDetalle={
-                                setProyectoSeleccionado
-                            }
+                                onVerDetalle={
+                                    setProyectoSeleccionado
+                                }
 
-                        />
+                            />
 
-                    ))
+                        )
+                    )
                 }
 
             </div>
 
-            {    
+            {
                 proyectoSeleccionado && (
 
                     <DetalleProyecto
@@ -210,14 +264,15 @@ const ListaProyectos = () => {
                         }
 
                         onCerrar={() =>
-                            setProyectoSeleccionado(null)
+                            setProyectoSeleccionado(
+                                null
+                            )
                         }
 
                     />
 
                 )
             }
-    
 
             <button
                 className="boton-flotante"
@@ -233,114 +288,33 @@ const ListaProyectos = () => {
             {
                 mostrarFormulario && (
 
-                    <div className="formulario-modal">
+                    <FormularioProyecto
 
-                        <div className="formulario">
+                        onAgregar={
+                            agregarProyecto
+                        }
 
-                            <h2>
-                                Agregar Proyecto
-                            </h2>
+                        onCancelar={() =>
+                            setMostrarFormulario(
+                                false
+                            )
+                        }
 
-                            <input
-                                type="text"
-                                name="titulo"
-                                placeholder="Título"
-                                value={
-                                    formulario.titulo
-                                }
-                                onChange={
-                                    cambiarInput
-                                }
-                            />
+                    />
 
-                            <input
-                                type="text"
-                                name="categoria"
-                                placeholder="Categoría"
-                                value={
-                                    formulario.categoria
-                                }
-                                onChange={
-                                    cambiarInput
-                                }
-                            />
+                )
+            }
 
-                            <input
-                                type="text"
-                                name="estado"
-                                placeholder="Estado"
-                                value={
-                                    formulario.estado
-                                }
-                                onChange={
-                                    cambiarInput
-                                }
-                            />
+            {
+                ultimaActualizacion !== "" && (
 
-                            <textarea
-                                name="descripcion"
-                                placeholder="Descripción"
-                                value={
-                                    formulario.descripcion
-                                }
-                                onChange={
-                                    cambiarInput
-                                }
-                            />
+                    <RegistroActividad
 
-                            <textarea
-                                name="descripcion2"
-                                placeholder="Descripción adicional"
-                                value={
-                                    formulario.descripcion2
-                                }
-                                onChange={
-                                    cambiarInput
-                                }
-                            />
+                        fechaHora={
+                            ultimaActualizacion
+                        }
 
-                            <input
-                                type="text"
-                                name="integrante"
-                                placeholder="Nombre integrante"
-                                value={formulario.integrante}
-                                onChange={cambiarInput}
-                            />
-
-                            <input
-                                type="text"
-                                name="rol"
-                                placeholder="Rol integrante"
-                                value={formulario.rol}
-                                onChange={cambiarInput}
-                            />
-
-                            <div className="botones-formulario">
-
-                                <button
-                                    onClick={
-                                        agregarProyecto
-                                    }
-                                >
-                                    Agregar
-                                </button>
-
-                                <button
-                                    className="btn-cancelar"
-                                    onClick={() =>
-                                        setMostrarFormulario(
-                                            false
-                                        )
-                                    }
-                                >
-                                    Cancelar
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
+                    />
 
                 )
             }
@@ -348,6 +322,7 @@ const ListaProyectos = () => {
         </main>
 
     );
+
 };
 
 export default ListaProyectos;
