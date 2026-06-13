@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
     Container,
@@ -10,86 +11,46 @@ import {
 
 import AddIcon from "@mui/icons-material/Add";
 
-import proyectoService
-    from "../services/proyectoService";
+import proyectoService from "../services/proyectoService";
 
-import ProyectoCard
-    from "../components/ProyectoCard";
-
-import DetalleProyecto
-    from "../views/DetalleProyecto";
-
-import FormularioProyecto
-    from "../components/FormularioProyecto";
-
-import RegistroActividad
-    from "../components/RegistroActividad";
+import ProyectoCard from "../components/ProyectoCard";
+import FormularioProyecto from "../components/FormularioProyecto";
+import RegistroActividad from "../components/RegistroActividad";
 
 const ListaProyectos = () => {
 
-    const [proyectos,
-        setProyectos] = useState(
-            proyectoService.obtenerProyectos()
-        );
+    const navigate = useNavigate();
 
-    const [busqueda,
-        setBusqueda] = useState("");
+    const [proyectos, setProyectos] = useState(
+        proyectoService.obtenerProyectos()
+    );
 
-    const [proyectoSeleccionado,
-        setProyectoSeleccionado] =
-        useState(null);
+    const [busqueda, setBusqueda] = useState("");
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [ultimaActualizacion, setUltimaActualizacion] = useState("");
 
-    const [mostrarFormulario,
-        setMostrarFormulario] =
-        useState(false);
-
-    const [ultimaActualizacion,
-        setUltimaActualizacion] =
-        useState("");
-
-    const primeraCarga =
-        useRef(true);
-
-    const accionUsuario =
-        useRef(false);
+    const primeraCarga = useRef(true);
+    const accionUsuario = useRef(false);
 
     useEffect(() => {
 
         if (primeraCarga.current) {
-
             primeraCarga.current = false;
             return;
-
         }
 
-        if (!accionUsuario.current)
-            return;
+        if (!accionUsuario.current) return;
 
         const ahora = new Date();
 
         const fechaHora =
-
-            `${ahora.getDate()
-                .toString()
-                .padStart(2, "0")}/` +
-
-            `${(ahora.getMonth() + 1)
-                .toString()
-                .padStart(2, "0")}/` +
-
+            `${ahora.getDate().toString().padStart(2, "0")}/` +
+            `${(ahora.getMonth() + 1).toString().padStart(2, "0")}/` +
             `${ahora.getFullYear()} a las ` +
+            `${ahora.getHours().toString().padStart(2, "0")}:` +
+            `${ahora.getMinutes().toString().padStart(2, "0")} hs.`;
 
-            `${ahora.getHours()
-                .toString()
-                .padStart(2, "0")}:` +
-
-            `${ahora.getMinutes()
-                .toString()
-                .padStart(2, "0")} hs.`;
-
-        setUltimaActualizacion(
-            fechaHora
-        );
+        setUltimaActualizacion(fechaHora);
 
         accionUsuario.current = false;
 
@@ -101,16 +62,7 @@ const ListaProyectos = () => {
 
         accionUsuario.current = true;
 
-        setProyectos(
-            proyectoService.obtenerProyectos()
-        );
-
-        if (
-            proyectoSeleccionado &&
-            proyectoSeleccionado.id === id
-        ) {
-            setProyectoSeleccionado(null);
-        }
+        setProyectos(proyectoService.obtenerProyectos());
     };
 
     const buscar = (texto) => {
@@ -118,34 +70,22 @@ const ListaProyectos = () => {
         setBusqueda(texto);
 
         if (texto === "") {
-
-            setProyectos(
-                proyectoService.obtenerProyectos()
-            );
-
+            setProyectos(proyectoService.obtenerProyectos());
         } else {
-
-            setProyectos(
-                proyectoService.buscarProyecto(texto)
-            );
-
+            setProyectos(proyectoService.buscarProyecto(texto));
         }
     };
 
     const agregarProyecto = (datos) => {
 
         const {
-
             titulo,
             categoria,
             estado,
-
             descripcion,
             descripcion2,
-
             integrante,
             rol
-
         } = datos;
 
         if (
@@ -153,68 +93,41 @@ const ListaProyectos = () => {
             categoria.trim() === "" ||
             estado.trim() === ""
         ) {
-
-            alert(
-                "Complete los campos obligatorios"
-            );
-
+            alert("Complete los campos obligatorios");
             return;
         }
 
         const nuevoProyecto = {
-
             id: Date.now(),
-
             titulo,
             categoria,
             estado,
-
-            descripcion: [
-
-                descripcion,
-
-                descripcion2
-
-            ],
-
-            recursos: [
-
-                "PDF",
-                "Drive",
-                "GitHub"
-
-            ],
-
+            descripcion: [descripcion, descripcion2],
+            recursos: ["PDF", "Drive", "GitHub"],
             equipo: [
-
                 {
                     nombre: integrante,
                     rol: rol
                 }
-
             ]
-
         };
 
-        proyectoService.agregarProyecto(
-            nuevoProyecto
-        );
+        proyectoService.agregarProyecto(nuevoProyecto);
 
         accionUsuario.current = true;
 
-        setProyectos(
-            proyectoService.obtenerProyectos()
-        );
+        setProyectos(proyectoService.obtenerProyectos());
 
         setMostrarFormulario(false);
     };
 
+    const verDetalle = (id) => {
+        navigate(`/proyecto/${id}`);
+    };
+
     return (
 
-        <Container
-            maxWidth="xl"
-            sx={{ mt: 4, mb: 4 }}
-        >
+        <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
 
             <Typography
                 variant="h3"
@@ -230,9 +143,7 @@ const ListaProyectos = () => {
                 label="Buscar proyecto"
                 variant="outlined"
                 value={busqueda}
-                onChange={(e) =>
-                    buscar(e.target.value)
-                }
+                onChange={(e) => buscar(e.target.value)}
                 sx={{
                     mb: 4,
                     maxWidth: 600,
@@ -241,54 +152,27 @@ const ListaProyectos = () => {
                 }}
             />
 
-            <Grid
-                container
-                spacing={4}
-                justifyContent="center"
-            >
+            <Grid container spacing={4} justifyContent="center">
 
-                {
-                    proyectos.map((proyecto) => (
+                {proyectos.map((proyecto) => (
 
-                        <Grid
-                            item
-                            xs={12}
-                            sm={6}
-                            md={4}
-                            lg={3}
-                            key={proyecto.id}
-                        >
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={proyecto.id}>
 
-                            <ProyectoCard
-                                proyecto={proyecto}
-                                onEliminar={eliminar}
-                            />
+                        <ProyectoCard
+                            proyecto={proyecto}
+                            onEliminar={eliminar}
+                            onVerDetalle={verDetalle}
+                        />
 
-                        </Grid>
+                    </Grid>
 
-                    ))
-                }
+                ))}
 
             </Grid>
 
-            {
-                proyectoSeleccionado && (
-
-                    <DetalleProyecto
-                        proyecto={proyectoSeleccionado}
-                        onCerrar={() =>
-                            setProyectoSeleccionado(null)
-                        }
-                    />
-
-                )
-            }
-
             <Fab
                 color="primary"
-                onClick={() =>
-                    setMostrarFormulario(!mostrarFormulario)
-                }
+                onClick={() => setMostrarFormulario(!mostrarFormulario)}
                 sx={{
                     position: "fixed",
                     bottom: 80,
@@ -296,47 +180,29 @@ const ListaProyectos = () => {
                     width: 85,
                     height: 85,
                     boxShadow: 8,
-
                     transition: "all 0.4s ease",
-
                     "&:hover": {
                         transform: "scale(1.05)",
                         boxShadow: 12
                     }
                 }}
             >
-                <AddIcon
-                    sx={{
-                        fontSize: 45
-                    }}
-                />
+                <AddIcon sx={{ fontSize: 45 }} />
             </Fab>
 
-            {
-                mostrarFormulario && (
+            {mostrarFormulario && (
+                <FormularioProyecto
+                    onAgregar={agregarProyecto}
+                    onCancelar={() => setMostrarFormulario(false)}
+                />
+            )}
 
-                    <FormularioProyecto
-                        onAgregar={agregarProyecto}
-                        onCancelar={() =>
-                            setMostrarFormulario(false)
-                        }
-                    />
-
-                )
-            }
-
-            {
-                ultimaActualizacion !== "" && (
-
-                    <RegistroActividad
-                        fechaHora={ultimaActualizacion}
-                    />
-
-                )
-            }
+            {ultimaActualizacion !== "" && (
+                <RegistroActividad fechaHora={ultimaActualizacion} />
+            )}
 
         </Container>
-
     );
 };
+
 export default ListaProyectos;

@@ -85,7 +85,7 @@ const ProyectoCard = ({
 
                     <Button
                         component={Link}
-                        to={`/proyectos/${id}`}
+                        to={`/proyecto/${id}`}
                         variant="contained"
                         size="small"
                         fullWidth

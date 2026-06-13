@@ -1,85 +1,113 @@
-import { useParams }
-    from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-import proyectoService
-    from "../services/proyectoService";
+import proyectoService from "../services/proyectoService";
 
 import {
-
     Container,
     Paper,
-    Typography
-
-}
-    from "@mui/material";
+    Typography,
+    Box,
+    Chip,
+    Button,
+    Divider
+} from "@mui/material";
 
 const DetalleProyecto = () => {
 
     const { id } = useParams();
+    const navigate = useNavigate();
 
-    const proyecto =
-        proyectoService.obtenerProyectoPorId(id);
+    const proyecto = proyectoService.obtenerProyectoPorId(id);
 
     if (!proyecto) {
-
         return (
+            <Container sx={{ mt: 4 }}>
+                <Typography variant="h5" color="error">
+                    Proyecto no encontrado
+                </Typography>
 
-            <Typography>
-
-                Proyecto no encontrado
-
-            </Typography>
-
+                <Button
+                    sx={{ mt: 2 }}
+                    variant="contained"
+                    onClick={() => navigate("/proyectos")}
+                >
+                    Volver
+                </Button>
+            </Container>
         );
-
     }
 
     return (
+        <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
 
-        <Container>
+            <Paper elevation={6} sx={{ p: 4, borderRadius: 4 }}>
 
-            <Paper
-                sx={{ p: 3 }}
-            >
-
-                <Typography
-                    variant="h4"
-                >
+                {/* Título */}
+                <Typography variant="h4" fontWeight="bold" gutterBottom>
                     {proyecto.titulo}
                 </Typography>
 
-                <Typography>
+                {/* Categoría y estado */}
+                <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+                    <Chip label={proyecto.categoria} color="primary" />
+                    <Chip label={proyecto.estado} color="secondary" />
+                </Box>
 
-                    Categoría:
-                    {proyecto.categoria}
+                <Divider sx={{ my: 2 }} />
 
+                {/* Descripción */}
+                <Typography variant="h6" gutterBottom>
+                    Descripción
                 </Typography>
 
-                <Typography>
+                <Box sx={{ mb: 3 }}>
+                    {proyecto.descripcion.map((item, index) => (
+                        <Typography key={index} sx={{ mb: 1 }}>
+                            {item}
+                        </Typography>
+                    ))}
+                </Box>
 
-                    Estado:
-                    {proyecto.estado}
+                <Divider sx={{ my: 2 }} />
 
+                {/* Recursos */}
+                <Typography variant="h6" gutterBottom>
+                    Recursos
                 </Typography>
 
-                <Typography sx={{ mt: 2 }}>
+                <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mb: 3 }}>
+                    {proyecto.recursos.map((recurso, index) => (
+                        <Chip key={index} label={recurso} />
+                    ))}
+                </Box>
 
-                    {proyecto.descripcion[0]}
+                <Divider sx={{ my: 2 }} />
 
+                {/* Equipo */}
+                <Typography variant="h6" gutterBottom>
+                    Equipo
                 </Typography>
 
-                <Typography>
+                <Box sx={{ mt: 1 }}>
+                    {proyecto.equipo.map((persona, index) => (
+                        <Typography key={index} sx={{ mb: 1 }}>
+                            👤 {persona.nombre} — {persona.rol}
+                        </Typography>
+                    ))}
+                </Box>
 
-                    {proyecto.descripcion[1]}
-
-                </Typography>
+                {/* Botón volver */}
+                <Button
+                    variant="contained"
+                    sx={{ mt: 4 }}
+                    onClick={() => navigate("/proyectos")}
+                >
+                    Volver a proyectos
+                </Button>
 
             </Paper>
-
         </Container>
-
     );
-
 };
 
 export default DetalleProyecto;
