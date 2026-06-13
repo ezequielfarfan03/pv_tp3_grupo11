@@ -1,15 +1,29 @@
+import { NavLink } from "react-router-dom";
+import { Box, Button } from "@mui/material";
+
 const Nav = () => {
-
     return (
-        <nav className="nav">
+        <Box
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 2,
+                py: 2,
+                backgroundColor: "#f5f5f5"
+            }}
+        >
+            <Button component={NavLink} to="/dashboard">
+                Dashboard
+            </Button>
 
-            <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Proyectos</a></li>
-                <li><a href="#">Contacto</a></li>
-            </ul>
+            <Button component={NavLink} to="/proyectos">
+                Proyectos
+            </Button>
 
-        </nav>
+            <Button component={NavLink} to="/perfil">
+                Perfil
+            </Button>
+        </Box>
     );
 };
 

@@ -200,12 +200,24 @@ const proyectoService = (() => {
         );
     };
 
+    const obtenerProyectoPorId = (id) => {
+
+        return proyectos.find(
+
+            proyecto =>
+                proyecto.id === Number(id)
+
+        );
+
+    };
+
     return {
 
         obtenerProyectos,
         agregarProyecto,
         eliminarProyecto,
-        buscarProyecto
+        buscarProyecto,
+        obtenerProyectoPorId
 
     };
 

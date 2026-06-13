@@ -1,18 +1,22 @@
-const RegistroActividad = ({ fechaHora }) => {
+import Alert
+    from "@mui/material/Alert";
+
+const RegistroActividad = ({
+    fechaHora
+}) => {
 
     return (
 
-        <div className="registro-actividad">
+        <Alert
+            severity="info"
+            sx={{ mt: 3 }}
+        >
 
-            <p>
+            Última actualización de la lista:
+            {" "}
+            {fechaHora}
 
-                Última actualización de la lista:
-                {" "}
-                {fechaHora}
-
-            </p>
-
-        </div>
+        </Alert>
 
     );
 

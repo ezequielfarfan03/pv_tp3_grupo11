@@ -1,53 +1,115 @@
+import {
+    Card,
+    CardContent,
+    Button,
+    Typography,
+    Box,
+    Chip
+} from "@mui/material";
+
+import {
+    Link
+} from "react-router-dom";
+
 const ProyectoCard = ({
     proyecto,
-    onEliminar,
-    onVerDetalle
+    onEliminar
 }) => {
 
     const {
+        id,
         titulo,
         categoria,
-        estado,
-        id
+        estado
     } = proyecto;
 
     return (
 
-        <div className="card">
+        <Card
+            elevation={4}
+            sx={{
+                height: "100%",
+                borderRadius: 4,
+                transition: "0.3s",
+                minHeight: 220,
 
-            <h3>{titulo}</h3>
+                "&:hover": {
+                    transform: "translateY(-6px)",
+                    boxShadow: 10
+                }
+            }}
+        >
 
-            <p>
-                <strong>Categoría:</strong> {categoria}
-            </p>
+            <CardContent
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                }}
+            >
 
-            <p>
-                <strong>Estado:</strong> {estado}
-            </p>
+                <Box>
 
-            <div className="botones-card">
+                    <Typography
+                        variant="h6"
+                        fontWeight="bold"
+                        gutterBottom
+                    >
+                        {titulo}
+                    </Typography>
 
-                <button
-                    className="btn-detalle"
-                    onClick={() =>
-                        onVerDetalle(proyecto)
-                    }
-                >
-                    Ver detalle
-                </button>
+                    <Chip
+                        label={categoria}
+                        color="primary"
+                        size="small"
+                        sx={{ mb: 2 }}
+                    />
 
-                <button
-                    className="btn-eliminar"
-                    onClick={() =>
-                        onEliminar(id)
-                    }
-                >
-                    Eliminar
-                </button>
+                    <Typography
+                        color="text.secondary"
+                    >
+                        Estado:
+                    </Typography>
 
-            </div>
+                    <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        sx={{ mb: 2 }}
+                    >
+                        {estado}
+                    </Typography>
 
-        </div>
+                </Box>
+
+                <Box>
+
+                    <Button
+                        component={Link}
+                        to={`/proyectos/${id}`}
+                        variant="contained"
+                        size="small"
+                        fullWidth
+                        sx={{ mb: 1 }}
+                    >
+                        Ver detalle
+                    </Button>
+
+                    <Button
+                        color="error"
+                        variant="outlined"
+                        fullWidth
+                        onClick={() =>
+                            onEliminar(id)
+                        }
+                    >
+                        Eliminar
+                    </Button>
+
+                </Box>
+
+            </CardContent>
+
+        </Card>
 
     );
 

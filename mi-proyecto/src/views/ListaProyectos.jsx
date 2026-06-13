@@ -1,19 +1,29 @@
 import { useState, useEffect, useRef } from "react";
 
+import {
+    Container,
+    Grid,
+    Typography,
+    TextField,
+    Fab
+} from "@mui/material";
+
+import AddIcon from "@mui/icons-material/Add";
+
 import proyectoService
     from "../services/proyectoService";
 
 import ProyectoCard
-    from "./ProyectoCard";
+    from "../components/ProyectoCard";
 
 import DetalleProyecto
-    from "./DetalleProyecto";
+    from "../views/DetalleProyecto";
 
 import FormularioProyecto
-    from "./FormularioProyecto";
+    from "../components/FormularioProyecto";
 
 import RegistroActividad
-    from "./RegistroActividad";
+    from "../components/RegistroActividad";
 
 const ListaProyectos = () => {
 
@@ -201,105 +211,115 @@ const ListaProyectos = () => {
 
     return (
 
-        <main className="main">
+        <Container
+            maxWidth="xl"
+            sx={{ mt: 4, mb: 4 }}
+        >
 
-            <h2>
+            <Typography
+                variant="h3"
+                align="center"
+                fontWeight="bold"
+                gutterBottom
+            >
                 Lista de Proyectos
-            </h2>
+            </Typography>
 
-            <div className="buscador">
+            <TextField
+                fullWidth
+                label="Buscar proyecto"
+                variant="outlined"
+                value={busqueda}
+                onChange={(e) =>
+                    buscar(e.target.value)
+                }
+                sx={{
+                    mb: 4,
+                    maxWidth: 600,
+                    display: "block",
+                    mx: "auto"
+                }}
+            />
 
-                <input
-                    type="text"
-                    placeholder="Buscar proyecto..."
-                    value={busqueda}
-                    onChange={(e) =>
-                        buscar(
-                            e.target.value
-                        )
-                    }
-                />
-
-            </div>
-
-            <div className="contenedor-proyectos">
+            <Grid
+                container
+                spacing={4}
+                justifyContent="center"
+            >
 
                 {
-                    proyectos.map(
-                        (proyecto) => (
+                    proyectos.map((proyecto) => (
+
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={4}
+                            lg={3}
+                            key={proyecto.id}
+                        >
 
                             <ProyectoCard
-
-                                key={
-                                    proyecto.id
-                                }
-
-                                proyecto={
-                                    proyecto
-                                }
-
-                                onEliminar={
-                                    eliminar
-                                }
-
-                                onVerDetalle={
-                                    setProyectoSeleccionado
-                                }
-
+                                proyecto={proyecto}
+                                onEliminar={eliminar}
                             />
 
-                        )
-                    )
+                        </Grid>
+
+                    ))
                 }
 
-            </div>
+            </Grid>
 
             {
                 proyectoSeleccionado && (
 
                     <DetalleProyecto
-
-                        proyecto={
-                            proyectoSeleccionado
-                        }
-
+                        proyecto={proyectoSeleccionado}
                         onCerrar={() =>
-                            setProyectoSeleccionado(
-                                null
-                            )
+                            setProyectoSeleccionado(null)
                         }
-
                     />
 
                 )
             }
 
-            <button
-                className="boton-flotante"
+            <Fab
+                color="primary"
                 onClick={() =>
-                    setMostrarFormulario(
-                        !mostrarFormulario
-                    )
+                    setMostrarFormulario(!mostrarFormulario)
                 }
+                sx={{
+                    position: "fixed",
+                    bottom: 80,
+                    right: 40,
+                    width: 85,
+                    height: 85,
+                    boxShadow: 8,
+
+                    transition: "all 0.4s ease",
+
+                    "&:hover": {
+                        transform: "scale(1.05)",
+                        boxShadow: 12
+                    }
+                }}
             >
-                +
-            </button>
+                <AddIcon
+                    sx={{
+                        fontSize: 45
+                    }}
+                />
+            </Fab>
 
             {
                 mostrarFormulario && (
 
                     <FormularioProyecto
-
-                        onAgregar={
-                            agregarProyecto
-                        }
-
+                        onAgregar={agregarProyecto}
                         onCancelar={() =>
-                            setMostrarFormulario(
-                                false
-                            )
+                            setMostrarFormulario(false)
                         }
-
                     />
 
                 )
@@ -309,20 +329,14 @@ const ListaProyectos = () => {
                 ultimaActualizacion !== "" && (
 
                     <RegistroActividad
-
-                        fechaHora={
-                            ultimaActualizacion
-                        }
-
+                        fechaHora={ultimaActualizacion}
                     />
 
                 )
             }
 
-        </main>
+        </Container>
 
     );
-
 };
-
 export default ListaProyectos;
