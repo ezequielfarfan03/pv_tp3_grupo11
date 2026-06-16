@@ -165,7 +165,6 @@ const FormularioProyecto = ({
                     </Grid>
 
                     <Grid item xs={12} md={6}>
-
                         <TextField
                             fullWidth
                             label="Categoría"
@@ -173,16 +172,14 @@ const FormularioProyecto = ({
                             value={formulario.categoria}
                             onChange={cambiarInput}
                         />
-
                     </Grid>
 
                     <Grid item xs={12} md={6}>
-
-                        <FormControl
-                            fullWidth
-                            size="medium"
-                        >
-                            <InputLabel id="estado-label">
+                        <FormControl fullWidth>
+                            <InputLabel
+                                id="estado-label"
+                                shrink
+                            >
                                 Estado
                             </InputLabel>
 
@@ -190,12 +187,12 @@ const FormularioProyecto = ({
                                 labelId="estado-label"
                                 name="estado"
                                 value={formulario.estado}
-                                label="Estado"
                                 onChange={cambiarInput}
-                                sx={{
-                                    minHeight: 56
-                                }}
+                                displayEmpty
                             >
+                                <MenuItem value="">
+                                    Seleccione un estado
+                                </MenuItem>
 
                                 <MenuItem value="Pendiente">
                                     Pendiente
@@ -210,11 +207,8 @@ const FormularioProyecto = ({
                                 </MenuItem>
 
                             </Select>
-
                         </FormControl>
-
                     </Grid>
-
                     <Grid item xs={12}>
 
                         <TextField

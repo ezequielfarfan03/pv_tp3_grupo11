@@ -27,7 +27,6 @@ const Dashboard = () => {
                 align="center"
                 fontWeight="bold"
                 gutterBottom
-                sx={{ mt: 0 }}
             >
                 Dashboard
             </Typography>
@@ -45,27 +44,35 @@ const Dashboard = () => {
                 container
                 spacing={4}
                 justifyContent="center"
-                alignItems="center"
-                sx={{
-                    maxWidth: "100%",
-                    margin: "0 auto"
-                }}
+                sx={{ mt: 2 }}
             >
 
                 {/* TOTAL PROYECTOS */}
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                >
 
                     <Card
                         elevation={6}
                         sx={{
+                            width: 280,
+                            height: 240,
+                            mx: "auto",
                             borderRadius: 4,
-                            textAlign: "center",
-                            transition: "0.3s",
+
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+
+                            transition: "all 0.3s ease",
 
                             "&:hover": {
-                                transform: "translateY(-8px)",
-                                boxShadow: 10
+                                transform: "translateY(-6px)",
+                                boxShadow: 8
                             }
                         }}
                     >
@@ -111,20 +118,32 @@ const Dashboard = () => {
 
                 </Grid>
 
-                {/* EN CURSO */}
+                {/* PROYECTOS EN CURSO */}
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                >
 
                     <Card
                         elevation={6}
                         sx={{
+                            width: 280,
+                            height: 240,
+                            mx: "auto",
                             borderRadius: 4,
-                            textAlign: "center",
-                            transition: "0.3s",
+
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+
+                            transition: "all 0.3s ease",
 
                             "&:hover": {
-                                transform: "translateY(-8px)",
-                                boxShadow: 10
+                                transform: "translateY(-6px)",
+                                boxShadow: 8
                             }
                         }}
                     >
@@ -172,18 +191,30 @@ const Dashboard = () => {
 
                 {/* FINALIZADOS */}
 
-                <Grid item xs={12} sm={6} md={3}>
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                >
 
                     <Card
                         elevation={6}
                         sx={{
+                            width: 280,
+                            height: 240,
+                            mx: "auto",
                             borderRadius: 4,
-                            textAlign: "center",
-                            transition: "0.3s",
+
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+
+                            transition: "all 0.3s ease",
 
                             "&:hover": {
-                                transform: "translateY(-8px)",
-                                boxShadow: 10
+                                transform: "translateY(-6px)",
+                                boxShadow: 8
                             }
                         }}
                     >
@@ -234,6 +265,7 @@ const Dashboard = () => {
         </Container>
 
     );
+
 };
 
 export default Dashboard;

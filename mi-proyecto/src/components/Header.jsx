@@ -2,12 +2,22 @@ import {
     AppBar,
     Toolbar,
     Typography,
-    Box
+    Box,
+    Chip
 } from "@mui/material";
+
+import PersonIcon from "@mui/icons-material/Person";
+
+import { useContext } from "react";
 
 import logo from "../img/logo.jpg";
 
+import { UsuarioContext } from "../context/UsuarioContext";
+
 const Header = () => {
+
+    const { usuario } =
+        useContext(UsuarioContext);
 
     return (
 
@@ -25,6 +35,8 @@ const Header = () => {
                 }}
             >
 
+                {/* Logo */}
+
                 <Box
                     sx={{
                         position: "absolute",
@@ -34,9 +46,11 @@ const Header = () => {
                         padding: "8px",
                         display: "flex",
                         alignItems: "center",
-                        justifyContent: "center"
+                        justifyContent: "center",
+                        boxShadow: 2
                     }}
                 >
+
                     <Box
                         component="img"
                         src={logo}
@@ -47,7 +61,10 @@ const Header = () => {
                             objectFit: "contain"
                         }}
                     />
+
                 </Box>
+
+                {/* Título */}
 
                 <Typography
                     variant="h4"
@@ -58,6 +75,25 @@ const Header = () => {
                 >
                     Gestión de Proyectos Educativos
                 </Typography>
+
+                {/* Usuario */}
+
+                <Chip
+                    icon={<PersonIcon />}
+                    label={`${usuario.nombre} - ${usuario.rol}`}
+                    sx={{
+                        position: "absolute",
+                        right: 20,
+                        backgroundColor:
+                            "rgba(255,255,255,0.15)",
+                        color: "white",
+                        fontWeight: "bold",
+
+                        "& .MuiChip-icon": {
+                            color: "white"
+                        }
+                    }}
+                />
 
             </Toolbar>
 

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-
 import {
     Container,
     Grid,
@@ -8,11 +7,8 @@ import {
     TextField,
     Fab
 } from "@mui/material";
-
 import AddIcon from "@mui/icons-material/Add";
-
 import proyectoService from "../services/proyectoService";
-
 import ProyectoCard from "../components/ProyectoCard";
 import FormularioProyecto from "../components/FormularioProyecto";
 import RegistroActividad from "../components/RegistroActividad";
